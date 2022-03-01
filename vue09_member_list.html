@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="Chrome">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+      integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn"
+      crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js"
+        integrity="sha384-VHvPCCyXqtD5DqJeNxl2dtTyhF78xXNXdkwX1CZeRusQfRKp+tA7hAShOK/B/fQ2"
+        crossorigin="anonymous"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<title>Vue</title>
+</head>
+<body>
+    <p>회원목록을 테이블로 만들어 관리하기</p>
+    <div id="app" class="container">
+        <div class="jumbotron">
+            <h2>회원정보</h2>
+            <label for="name">이름</label><br>
+            <input type="text" v-model:name="user.name" id="name"><br><br>
+            <label for="tel">연락처</label><br>
+            <input type="text" v-model:name="user.tel" id="tel"><br><br>
+            <button class="btn-sm btn-info" @click="memInsert">회원추가</button>
+        </div>
+        <h1>회원목록</h1>
+        <table class="table table-striped">
+            <!-- 표의 제목 -->
+            <tr>
+                <th>번호</th>
+                <th>이름</th>
+                <th>연락처</th>
+                <th>비고</th>
+            </tr>
+            <!-- 회원목록 -->
+            <tr v-for="(v, i) in list">
+                <td>{{v.no}}</td>
+                <td>{{v.name}}</td>
+                <td>{{v.tel}}</td>
+                <td>[{{i}}]
+                    <button class="btn btn-secondary" v-on:click="memEdit(i)">수정</button>
+                    <button class="btn btn-danger" @click="memDel(index)">삭제</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <script>
+        new Vue({
+            el:"#app",
+            data(){
+                return {
+                    list:[
+                        {no:1, name:'홍길동', tel:'010-1234-5678'},
+                        {no:2, name:'세종대왕', tel:'010-1111-2222'},
+                        {no:3, name:'이순신', tel:'010-8989-7777'},
+                        {no:4, name:'박지성', tel:'010-9999-7777'},
+                        {no:5, name:'손흥민', tel:'010-1212-3434'}
+                    ],
+                    user:{
+                        no:0,
+                        name:'',
+                        tel:''
+                    }
+                };
+            },
+            methods:{
+                memInsert(){
+                    console.log(this.list);
+                    //이름, 연락처 입력유무확인
+                    if(this.user.name==""){
+                        alert("이름을 입력 후 등록하세요");
+                        return false;
+                    }if(this.user.tel==""){
+                        alert("연락처를 입력 후 등록하세요");
+                        return false;
+                    }
+                        
+                    //배열 중 최고값, 최저값 구할 수 있다.
+
+                    /*
+                        배열명.reduce(function(prev, next){
+                            return (prev>next)? prev: next;
+                        });
+                    */
+                    //배열중 최저값 구하기
+                    /*
+                        배열명.reduce(function(prev, next){
+                            return (rpev>next)? next: prev;
+                        });
+                    */
+                    let maxNo = 0;
+                    if(!this.list.length==1){
+                        maxNo = this.list[0].no;
+                    }else if(this.list.length>1){
+                        maxNo = this.list.reduce(function(prev, next){
+                            return (prev.no > next.no) ? prev.no : next.no;
+                        });
+                    }
+
+                    //번호중 제일 큰 값을 구한다.
+                    /*var maxNo = this.list.reduce(function(prev, next){
+                        return (prev.no > next.no)? prev.no : next.no;
+                    });*/
+                    console.log(maxNo);
+                    //배열의 마지막 데이터 추가 함수 : push()
+                    var newMem = {no: maxNo+1, name:this.user.name, tel:this.user.tel};
+                    this.list.push(newMem);
+                }, //memInsert
+                memEdit(idx){//회원수정
+                    //index위치의 데이터를 user에 대입하면 입력컴퍼넌트가 v-model로 연결되어 값이 폼에 보인다.
+                    this.user = this.list[idx];
+                },
+                memDel(idx){//회원삭제
+                    // splice() : index위치의 정보를 지운다.
+                    //               index, count
+                    this.list.splice(idx,      1);
+                }
+            }//methods
+            
+        });
+    </script>
+</body>
+</html>
